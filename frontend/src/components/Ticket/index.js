@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 import openSocket from "../../services/socket-io";
 import clsx from "clsx";
 
-import { Paper, makeStyles } from "@material-ui/core";
+import { 
+  Paper, 
+  //makeStyles 
+} from "@mui/material";
 
 import ContactDrawer from "../ContactDrawer";
 import MessageInput from "../MessageInput/";
@@ -19,6 +22,7 @@ import toastError from "../../errors/toastError";
 
 const drawerWidth = 320;
 
+/*
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -72,11 +76,12 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 0,
   },
 }));
+*/
 
 const Ticket = () => {
   const { ticketId } = useParams();
-  const history = useHistory();
-  const classes = useStyles();
+  const history = useNavigate();
+  const classes = {};//useStyles();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -172,6 +177,7 @@ const Ticket = () => {
           <MessageInput ticketStatus={ticket.status} />
         </ReplyMessageProvider>
       </Paper>
+      
       <ContactDrawer
         open={drawerOpen}
         handleDrawerClose={handleDrawerClose}

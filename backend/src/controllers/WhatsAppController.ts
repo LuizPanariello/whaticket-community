@@ -18,7 +18,7 @@ interface WhatsappData {
   isDefault?: boolean;
 }
 
-export const index = async (req: Request, res: Response): Promise<Response> => {
+export const index = async (_: Request, res: Response): Promise<Response> => {
   const whatsapps = await ListWhatsAppsService();
 
   return res.status(200).json(whatsapps);
@@ -69,10 +69,7 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).json(whatsapp);
 };
 
-export const update = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const update = async (req: Request, res: Response): Promise<Response> => {
   const { whatsappId } = req.params;
   const whatsappData = req.body;
 
@@ -97,10 +94,7 @@ export const update = async (
   return res.status(200).json(whatsapp);
 };
 
-export const remove = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const remove = async (req: Request, res: Response): Promise<Response> => {
   const { whatsappId } = req.params;
 
   await DeleteWhatsAppService(whatsappId);

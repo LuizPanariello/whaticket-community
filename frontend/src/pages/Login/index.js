@@ -13,11 +13,11 @@ import {
   InputAdornment,
   IconButton,
   Link
-} from '@material-ui/core';
+} from '@mui/material';
 
-import { LockOutlined, Visibility, VisibilityOff } from '@material-ui/icons';
+import { LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { makeStyles } from "@material-ui/core/styles";
+//import { makeStyles } from "@mui/material/styles";
 
 import { i18n } from "../../translate/i18n";
 
@@ -36,6 +36,7 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 // 	);
 // };
 
+/*
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -55,9 +56,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+*/
 
 const Login = () => {
-  const classes = useStyles();
+  //const classes = {};//useStyles();
 
   const [user, setUser] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -76,14 +78,14 @@ const Login = () => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
+      <div >
+        <Avatar >
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">
           {i18n.t("login.title")}
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handlSubmit}>
+        <form noValidate onSubmit={handlSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -127,7 +129,7 @@ const Login = () => {
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
+            //className={classes.submit}
           >
             {i18n.t("login.buttons.submit")}
           </Button>

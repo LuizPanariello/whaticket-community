@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import * as Yup from "yup";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Formik, Form, Field } from "formik";
@@ -12,68 +12,28 @@ import {
 	CssBaseline,
 	TextField,
 	Grid,
-	Box,
 	Typography,
 	Container,
 	InputAdornment,
 	IconButton,
 	Link
-} from '@material-ui/core';
+} from "@mui/material"
 
-import { LockOutlined, Visibility, VisibilityOff } from '@material-ui/icons';
-
-import { makeStyles } from "@material-ui/core/styles";
+import { LockOutlined, Visibility, VisibilityOff } from '@mui/icons-material'
 
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 
-// const Copyright = () => {
-// 	return (
-// 		<Typography variant="body2" color="textSecondary" align="center">
-// 			{"Copyleft "}
-// 			<Link color="inherit" href="https://github.com/canove">
-// 				Canove
-// 			</Link>{" "}
-// 			{new Date().getFullYear()}
-// 			{"."}
-// 		</Typography>
-// 	);
-// };
-
-const useStyles = makeStyles(theme => ({
-	paper: {
-		marginTop: theme.spacing(8),
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
-	form: {
-		width: "100%",
-		marginTop: theme.spacing(3),
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2),
-	},
-}));
-
 const UserSchema = Yup.object().shape({
-	name: Yup.string()
-		.min(2, "Too Short!")
-		.max(50, "Too Long!")
-		.required("Required"),
+	name: Yup.string().min(2, "Too Short!").max(50, "Too Long!").required("Required"),
 	password: Yup.string().min(5, "Too Short!").max(50, "Too Long!"),
 	email: Yup.string().email("Invalid email").required("Required"),
 });
 
 const SignUp = () => {
-	const classes = useStyles();
-	const history = useHistory();
+	const history = useNavigate();
 
 	const initialState = { name: "", email: "", password: "" };
 	const [showPassword, setShowPassword] = useState(false);
@@ -83,7 +43,7 @@ const SignUp = () => {
 		try {
 			await api.post("/auth/signup", values);
 			toast.success(i18n.t("signup.toasts.success"));
-			history.push("/login");
+			history("/login");
 		} catch (err) {
 			toastError(err);
 		}
@@ -92,14 +52,15 @@ const SignUp = () => {
 	return (
 		<Container component="main" maxWidth="xs">
 			<CssBaseline />
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}>
+			
+			<div>
+				<Avatar >
 					<LockOutlined />
 				</Avatar>
 				<Typography component="h1" variant="h5">
 					{i18n.t("signup.title")}
 				</Typography>
-				{/* <form className={classes.form} noValidate onSubmit={handleSignUp}> */}
+
 				<Formik
 					initialValues={user}
 					enableReinitialize={true}
@@ -112,7 +73,7 @@ const SignUp = () => {
 					}}
 				>
 					{({ touched, errors, isSubmitting }) => (
-						<Form className={classes.form}>
+						<Form>
 							<Grid container spacing={2}>
 								<Grid item xs={12}>
 									<Field
@@ -174,18 +135,13 @@ const SignUp = () => {
 								fullWidth
 								variant="contained"
 								color="primary"
-								className={classes.submit}
+								disabled={isSubmitting}
 							>
 								{i18n.t("signup.buttons.submit")}
 							</Button>
 							<Grid container justifyContent="flex-end">
 								<Grid item>
-									<Link
-										href="#"
-										variant="body2"
-										component={RouterLink}
-										to="/login"
-									>
+									<Link href="#" variant="body2" component={RouterLink} to="/login">
 										{i18n.t("signup.buttons.login")}
 									</Link>
 								</Grid>
@@ -194,7 +150,6 @@ const SignUp = () => {
 					)}
 				</Formik>
 			</div>
-			<Box mt={5}>{/* <Copyright /> */}</Box>
 		</Container>
 	);
 };

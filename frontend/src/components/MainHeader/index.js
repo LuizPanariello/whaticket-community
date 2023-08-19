@@ -1,19 +1,11 @@
 import React from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { Grid } from "@mui/material";
 
-const useStyles = makeStyles(theme => ({
-	contactsHeader: {
-		display: "flex",
-		alignItems: "center",
-		padding: "0px 6px 6px 6px",
-	},
-}));
-
-const MainHeader = ({ children }) => {
-	const classes = useStyles();
-
-	return <div className={classes.contactsHeader}>{children}</div>;
-};
+const MainHeader = ({ children }) => (
+	<Grid item xs={12}>
+		{children}
+	</Grid>
+);
 
 export default MainHeader;

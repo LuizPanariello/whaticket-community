@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { IconButton } from "@material-ui/core";
-import { MoreVert, Replay } from "@material-ui/icons";
+//import { makeStyles } from "@mui/material/styles";
+import { IconButton } from "@mui/material";
+import { MoreVert, Replay } from "@mui/icons-material";
 
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
@@ -12,6 +12,7 @@ import ButtonWithSpinner from "../ButtonWithSpinner";
 import toastError from "../../errors/toastError";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
+/*
 const useStyles = makeStyles(theme => ({
 	actionButtons: {
 		marginRight: 6,
@@ -23,10 +24,11 @@ const useStyles = makeStyles(theme => ({
 		},
 	},
 }));
+*/
 
 const TicketActionButtons = ({ ticket }) => {
-	const classes = useStyles();
-	const history = useHistory();
+	const classes = {};//useStyles();
+	const history = useNavigate();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const ticketOptionsMenuOpen = Boolean(anchorEl);

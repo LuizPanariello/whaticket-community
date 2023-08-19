@@ -1,18 +1,17 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 
-import { useHistory } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import openSocket from "../../services/socket-io";
 import useSound from "use-sound";
 
-import Popover from "@material-ui/core/Popover";
-import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import { makeStyles } from "@material-ui/core/styles";
-import Badge from "@material-ui/core/Badge";
-import ChatIcon from "@material-ui/icons/Chat";
+import Popover from "@mui/material/Popover";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Badge from "@mui/material/Badge";
+import ChatIcon from "@mui/icons-material/Chat";
 
 import TicketListItem from "../TicketListItem";
 import { i18n } from "../../translate/i18n";
@@ -20,6 +19,8 @@ import useTickets from "../../hooks/useTickets";
 import alertSound from "../../assets/sound.mp3";
 import { AuthContext } from "../../context/Auth/AuthContext";
 
+//import { makeStyles } from "@mui/material/styles";
+/*
 const useStyles = makeStyles(theme => ({
 	tabContainer: {
 		overflowY: "auto",
@@ -39,14 +40,17 @@ const useStyles = makeStyles(theme => ({
 		boxShadow: "none !important",
 	},
 }));
-
+*/
 const NotificationsPopOver = () => {
-	const classes = useStyles();
+	const classes = {};//useStyles();
 
-	const history = useHistory();
+	const params = useParams();
+	const history = useNavigate();
+
 	const { user } = useContext(AuthContext);
-	const ticketIdUrl = +history.location.pathname.split("/")[2];
+	const ticketIdUrl = params.ticketId;
 	const ticketIdRef = useRef(ticketIdUrl);
+	
 	const anchorEl = useRef();
 	const [isOpen, setIsOpen] = useState(false);
 	const [notifications, setNotifications] = useState([]);
@@ -56,8 +60,6 @@ const NotificationsPopOver = () => {
 	const { tickets } = useTickets({ withUnreadMessages: "true" });
 	const [play] = useSound(alertSound);
 	const soundAlertRef = useRef();
-
-	const historyRef = useRef(history);
 
 	useEffect(() => {
 		soundAlertRef.current = play;
@@ -157,7 +159,7 @@ const NotificationsPopOver = () => {
 		notification.onclick = e => {
 			e.preventDefault();
 			window.focus();
-			historyRef.current.push(`/tickets/${ticket.id}`);
+			history(`/tickets/${ticket.id}`);
 		};
 
 		setDesktopNotifications(prevState => {

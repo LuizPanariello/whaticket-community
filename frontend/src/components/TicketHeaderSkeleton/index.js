@@ -1,9 +1,10 @@
 import React from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Card, CardHeader } from "@material-ui/core";
-import Skeleton from "@material-ui/lab/Skeleton";
+//import { makeStyles } from "@mui/material/styles";
+import { Avatar, Card, CardHeader } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
 
+/*
 const useStyles = makeStyles(theme => ({
 	ticketHeader: {
 		display: "flex",
@@ -12,9 +13,10 @@ const useStyles = makeStyles(theme => ({
 		borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
 	},
 }));
+*/
 
 const TicketHeaderSkeleton = () => {
-	const classes = useStyles();
+	const classes = {};//useStyles();
 
 	return (
 		<Card square className={classes.ticketHeader}>

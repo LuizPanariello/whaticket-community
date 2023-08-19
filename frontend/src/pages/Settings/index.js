@@ -1,45 +1,19 @@
 import React, { useState, useEffect } from "react";
 import openSocket from "../../services/socket-io";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Select from "@material-ui/core/Select";
-import TextField from "@material-ui/core/TextField";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
 import { toast } from "react-toastify";
 
 import api from "../../services/api";
 import { i18n } from "../../translate/i18n.js";
 import toastError from "../../errors/toastError";
-
-const useStyles = makeStyles(theme => ({
-	root: {
-		display: "flex",
-		alignItems: "center",
-		padding: theme.spacing(8, 8, 3),
-	},
-
-	paper: {
-		padding: theme.spacing(2),
-		display: "flex",
-		alignItems: "center",
-		marginBottom: 12,
-
-	},
-
-	settingOption: {
-		marginLeft: "auto",
-	},
-	margin: {
-		margin: theme.spacing(1),
-	},
-
-}));
+import { Grid } from "@mui/material";
 
 const Settings = () => {
-	const classes = useStyles();
-
 	const [settings, setSettings] = useState([]);
 
 	useEffect(() => {
@@ -93,51 +67,53 @@ const Settings = () => {
 	};
 
 	return (
-		<div className={classes.root}>
-			<Container className={classes.container} maxWidth="sm">
-				<Typography variant="body2" gutterBottom>
-					{i18n.t("settings.title")}
-				</Typography>
-				<Paper className={classes.paper}>
-					<Typography variant="body1">
-						{i18n.t("settings.settings.userCreation.name")}
-					</Typography>
-					<Select
-						margin="dense"
-						variant="outlined"
-						native
-						id="userCreation-setting"
-						name="userCreation"
-						value={
-							settings && settings.length > 0 && getSettingValue("userCreation")
-						}
-						className={classes.settingOption}
-						onChange={handleChangeSetting}
-					>
-						<option value="enabled">
-							{i18n.t("settings.settings.userCreation.options.enabled")}
-						</option>
-						<option value="disabled">
-							{i18n.t("settings.settings.userCreation.options.disabled")}
-						</option>
-					</Select>
+		<Container maxWidth={"sm"}>
+			<Typography variant="body1" gutterBottom>
+				{i18n.t("settings.title")}
+			</Typography>
 
-				</Paper>
+			<Grid container spacing={2} xs={12}>
+				<Grid item xs={12}>
+					<Paper sx={{ p: 2 }}>
+						<Typography variant="body1">
+							{i18n.t("settings.settings.userCreation.name")}
+						</Typography>
 
-				<Paper className={classes.paper}>
-					<TextField
-						id="api-token-setting"
-						readonly
-						label="Token Api"
-						margin="dense"
-						variant="outlined"
-						fullWidth
-						value={settings && settings.length > 0 && getSettingValue("userApiToken")}
-					/>
-				</Paper>
+						<Select
+							native
+							id="userCreation-setting"
+							margin="dense"
+							variant="outlined"
+							name="userCreation"
+							value={settings && settings.length > 0 && getSettingValue("userCreation")}
+							onChange={handleChangeSetting}
+						>
+							<option value="enabled">
+								{i18n.t("settings.settings.userCreation.options.enabled")}
+							</option>
+							<option value="disabled">
+								{i18n.t("settings.settings.userCreation.options.disabled")}
+							</option>
+						</Select>
+					</Paper>
+				</Grid>
 
-			</Container>
-		</div>
+				<Grid item xs={12}>
+					<Paper sx={{ p: 2 }}>
+						<TextField
+							id="api-token-setting"
+							readonly
+							label="Token Api"
+							margin="dense"
+							variant="outlined"
+							fullWidth
+							value={settings && settings.length > 0 && getSettingValue("userApiToken")}
+						/>
+					</Paper>
+				</Grid>
+			</Grid>
+
+		</Container>
 	);
 };
 

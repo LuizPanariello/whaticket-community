@@ -4,14 +4,14 @@ import { isSameDay, parseISO, format } from "date-fns";
 import openSocket from "../../services/socket-io";
 import clsx from "clsx";
 
-import { green } from "@material-ui/core/colors";
+import { green } from "@mui/material/colors";
 import {
   Button,
   CircularProgress,
   Divider,
   IconButton,
   makeStyles,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   AccessTime,
   Block,
@@ -19,7 +19,7 @@ import {
   DoneAll,
   ExpandMore,
   GetApp,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 
 import MarkdownWrapper from "../MarkdownWrapper";
 import VcardPreview from "../VcardPreview";
@@ -32,6 +32,7 @@ import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import Audio from "../Audio";
 
+/*
 const useStyles = makeStyles((theme) => ({
   messagesListWrapper: {
     overflow: "hidden",
@@ -260,6 +261,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 10,
   },
 }));
+*/
 
 const reducer = (state, action) => {
   if (action.type === "LOAD_MESSAGES") {
@@ -308,7 +310,7 @@ const reducer = (state, action) => {
 };
 
 const MessagesList = ({ ticketId, isGroup }) => {
-  const classes = useStyles();
+  const classes = {};//useStyles();
 
   const [messagesList, dispatch] = useReducer(reducer, []);
   const [pageNumber, setPageNumber] = useState(1);

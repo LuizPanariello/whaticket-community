@@ -1,16 +1,15 @@
 import React, { createContext } from "react";
 
 import useAuth from "../../hooks/useAuth.js";
+import { Outlet } from "react-router-dom";
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = ({children}) => {
 	const { loading, user, isAuth, handleLogin, handleLogout } = useAuth();
 
 	return (
-		<AuthContext.Provider
-			value={{ loading, user, isAuth, handleLogin, handleLogout }}
-		>
+		<AuthContext.Provider value={{ loading, user, isAuth, handleLogin, handleLogout }} >
 			{children}
 		</AuthContext.Provider>
 	);

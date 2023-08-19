@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import openSocket from "../../services/socket-io";
-
 import { toast } from "react-toastify";
-
 import { i18n } from "../../translate/i18n";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 
 const useAuth = () => {
-	const history = useHistory();
+	const history = useNavigate();
 	const [isAuth, setIsAuth] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [user, setUser] = useState({});
@@ -88,14 +86,18 @@ const useAuth = () => {
 		setLoading(true);
 
 		try {
+			
 			const { data } = await api.post("/auth/login", userData);
 			localStorage.setItem("token", JSON.stringify(data.token));
+
 			api.defaults.headers.Authorization = `Bearer ${data.token}`;
+
 			setUser(data.user);
 			setIsAuth(true);
 			toast.success(i18n.t("auth.toasts.success"));
-			history.push("/tickets");
+			history("/tickets", { replace: true });
 			setLoading(false);
+
 		} catch (err) {
 			toastError(err);
 			setLoading(false);
@@ -112,7 +114,7 @@ const useAuth = () => {
 			localStorage.removeItem("token");
 			api.defaults.headers.Authorization = undefined;
 			setLoading(false);
-			history.push("/login");
+			history("/login", { replace: true });
 		} catch (err) {
 			toastError(err);
 			setLoading(false);

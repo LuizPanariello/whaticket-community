@@ -13,13 +13,14 @@ import {
   DialogContent,
   DialogTitle,
   CircularProgress,
-} from "@material-ui/core";
-import { green } from "@material-ui/core/colors";
+} from "@mui/material";
+import { green } from "@mui/material/colors";
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 
+/*
 const useStyles = makeStyles((theme) => ({
   root: {
     flexWrap: "wrap",
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
 }));
+*/
 
 const QuickAnswerSchema = Yup.object().shape({
   shortcut: Yup.string()
@@ -64,7 +66,7 @@ const QuickAnswersModal = ({
   initialValues,
   onSave,
 }) => {
-  const classes = useStyles();
+  const classes = {};//useStyles();
   const isMounted = useRef(true);
 
   const initialState = {

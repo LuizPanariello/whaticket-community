@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useReducer } from "react";
+
 import { toast } from "react-toastify";
+
 import openSocket from "../../services/socket-io";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import IconButton from "@material-ui/core/IconButton";
-import SearchIcon from "@material-ui/icons/Search";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import IconButton from "@mui/material/IconButton";
+import Search from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
-import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import EditIcon from "@material-ui/icons/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
 
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import MainHeaderButtonsWrapper from "../../components/MainHeaderButtonsWrapper";
+import MainContent from "../../components/MainContent";
 import Title from "../../components/Title";
 
 import api from "../../services/api";
@@ -29,6 +31,7 @@ import TableRowSkeleton from "../../components/TableRowSkeleton";
 import UserModal from "../../components/UserModal";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import toastError from "../../errors/toastError";
+import { Box } from "@mui/material";
 
 const reducer = (state, action) => {
   if (action.type === "LOAD_USERS") {
@@ -74,17 +77,7 @@ const reducer = (state, action) => {
   }
 };
 
-const useStyles = makeStyles((theme) => ({
-  mainPaper: {
-    flex: 1,
-    padding: theme.spacing(1),
-    overflowY: "scroll",
-    ...theme.scrollbarStyles,
-  },
-}));
-
 const Users = () => {
-  const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
@@ -103,6 +96,7 @@ const Users = () => {
 
   useEffect(() => {
     setLoading(true);
+
     const delayDebounceFn = setTimeout(() => {
       const fetchUsers = async () => {
         try {
@@ -118,6 +112,7 @@ const Users = () => {
       };
       fetchUsers();
     }, 500);
+
     return () => clearTimeout(delayDebounceFn);
   }, [searchParam, pageNumber]);
 
@@ -134,9 +129,7 @@ const Users = () => {
       }
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    return () => { socket.disconnect(); };
   }, []);
 
   const handleOpenUserModal = () => {
@@ -149,9 +142,7 @@ const Users = () => {
     setUserModalOpen(false);
   };
 
-  const handleSearch = (event) => {
-    setSearchParam(event.target.value.toLowerCase());
-  };
+  const handleSearch = (event) => setSearchParam(event.target.value.toLowerCase());
 
   const handleEditUser = (user) => {
     setSelectedUser(user);
@@ -170,9 +161,7 @@ const Users = () => {
     setPageNumber(1);
   };
 
-  const loadMore = () => {
-    setPageNumber((prevState) => prevState + 1);
-  };
+  const loadMore = () => setPageNumber((prevState) => prevState + 1);
 
   const handleScroll = (e) => {
     if (!hasMore || loading) return;
@@ -183,108 +172,122 @@ const Users = () => {
   };
 
   return (
-    <MainContainer>
+    <>
+      <MainContainer>
+        
+        <MainHeader>
+          <Title>{i18n.t("users.title")}</Title>
+
+          <MainHeaderButtonsWrapper>
+            <Box 
+              sx={{
+                display: "flex",
+                justifyContent: "space-between"
+              }}
+            >
+              <TextField
+                type="search"
+                size="small"
+                placeholder={i18n.t("contacts.searchPlaceholder")}
+                value={searchParam}
+                onChange={handleSearch}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search style={{ color: "gray" }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenUserModal}
+              >
+                {i18n.t("users.buttons.add")}
+              </Button>
+            </Box>
+
+          </MainHeaderButtonsWrapper>
+        </MainHeader>
+
+        <MainContent>
+          <Paper
+            variant="outlined"
+            onScroll={handleScroll}
+          >
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">{i18n.t("users.table.name")}</TableCell>
+                  <TableCell align="center">
+                    {i18n.t("users.table.email")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {i18n.t("users.table.profile")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {i18n.t("users.table.whatsapp")}
+                  </TableCell>              
+                  <TableCell align="center">
+                    {i18n.t("users.table.actions")}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <>
+                  {users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell align="center">{user.name}</TableCell>
+                      <TableCell align="center">{user.email}</TableCell>
+                      <TableCell align="center">{user.profile}</TableCell>
+                      <TableCell align="center">{user.whatsapp?.name}</TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleEditUser(user)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            setConfirmModalOpen(true);
+                            setDeletingUser(user);
+                          }}
+                        >
+                          <DeleteOutlineIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {loading && <TableRowSkeleton columns={4} />}
+                </>
+              </TableBody>
+            </Table>
+          </Paper>
+        </MainContent>
+      
+      </MainContainer>
+
       <ConfirmationModal
-        title={
-          deletingUser &&
-          `${i18n.t("users.confirmationModal.deleteTitle")} ${
-            deletingUser.name
-          }?`
-        }
+        title={deletingUser && `${i18n.t("users.confirmationModal.deleteTitle")} ${deletingUser.name}?`}
         open={confirmModalOpen}
         onClose={setConfirmModalOpen}
         onConfirm={() => handleDeleteUser(deletingUser.id)}
       >
-        {i18n.t("users.confirmationModal.deleteMessage")}
+          {i18n.t("users.confirmationModal.deleteMessage")}
       </ConfirmationModal>
+
       <UserModal
         open={userModalOpen}
         onClose={handleCloseUserModal}
         aria-labelledby="form-dialog-title"
         userId={selectedUser && selectedUser.id}
       />
-      <MainHeader>
-        <Title>{i18n.t("users.title")}</Title>
-        <MainHeaderButtonsWrapper>
-          <TextField
-            placeholder={i18n.t("contacts.searchPlaceholder")}
-            type="search"
-            value={searchParam}
-            onChange={handleSearch}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon style={{ color: "gray" }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenUserModal}
-          >
-            {i18n.t("users.buttons.add")}
-          </Button>
-        </MainHeaderButtonsWrapper>
-      </MainHeader>
-      <Paper
-        className={classes.mainPaper}
-        variant="outlined"
-        onScroll={handleScroll}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">{i18n.t("users.table.name")}</TableCell>
-              <TableCell align="center">
-                {i18n.t("users.table.email")}
-              </TableCell>
-              <TableCell align="center">
-                {i18n.t("users.table.profile")}
-              </TableCell>
-              <TableCell align="center">
-                {i18n.t("users.table.whatsapp")}
-              </TableCell>              
-              <TableCell align="center">
-                {i18n.t("users.table.actions")}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell align="center">{user.name}</TableCell>
-                  <TableCell align="center">{user.email}</TableCell>
-                  <TableCell align="center">{user.profile}</TableCell>
-                  <TableCell align="center">{user.whatsapp?.name}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditUser(user)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        setConfirmModalOpen(true);
-                        setDeletingUser(user);
-                      }}
-                    >
-                      <DeleteOutlineIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {loading && <TableRowSkeleton columns={4} />}
-            </>
-          </TableBody>
-        </Table>
-      </Paper>
-    </MainContainer>
+    </>
   );
 };
 

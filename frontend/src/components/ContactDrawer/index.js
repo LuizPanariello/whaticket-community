@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Drawer from "@material-ui/core/Drawer";
-import Link from "@material-ui/core/Link";
-import InputLabel from "@material-ui/core/InputLabel";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
+//import { makeStyles } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Drawer from "@mui/material/Drawer";
+import Link from "@mui/material/Link";
+import InputLabel from "@mui/material/InputLabel";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 
 import { i18n } from "../../translate/i18n";
 
@@ -19,6 +19,7 @@ import MarkdownWrapper from "../MarkdownWrapper";
 
 const drawerWidth = 320;
 
+/*
 const useStyles = makeStyles(theme => ({
 	drawer: {
 		width: drawerWidth,
@@ -80,9 +81,10 @@ const useStyles = makeStyles(theme => ({
 		padding: 6,
 	},
 }));
+*/
 
 const ContactDrawer = ({ open, handleDrawerClose, contact, loading }) => {
-	const classes = useStyles();
+	const classes = {};//useStyles();
 
 	const [modalOpen, setModalOpen] = useState(false);
 
@@ -92,14 +94,20 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading }) => {
 			variant="persistent"
 			anchor="right"
 			open={open}
-			PaperProps={{ style: { position: "absolute" } }}
-			BackdropProps={{ style: { position: "absolute" } }}
+			slotProps={{ sx: { position: "absolute" } }}
+			PaperProps={{ sx: { position: "absolute" } }}
 			ModalProps={{
 				container: document.getElementById("drawer-container"),
-				style: { position: "absolute" },
+				sx: { position: "absolute" },
 			}}
-			classes={{
-				paper: classes.drawerPaper,
+			sx={{
+				width: drawerWidth,
+				display: "flex",
+				borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+				borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+				borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+				borderTopRightRadius: 4,
+				borderBottomRightRadius: 4,
 			}}
 		>
 			<div className={classes.header}>
@@ -110,9 +118,8 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading }) => {
 					{i18n.t("contactDrawer.header")}
 				</Typography>
 			</div>
-			{loading ? (
-				<ContactDrawerSkeleton classes={classes} />
-			) : (
+			{loading ? (<ContactDrawerSkeleton classes={classes} />) : 
+			(
 				<div className={classes.content}>
 					<Paper square variant="outlined" className={classes.contactHeader}>
 						<Avatar

@@ -18,12 +18,12 @@ import {
 	TextField,
 	InputAdornment,
 	IconButton
-  } from '@material-ui/core';
+  } from '@mui/material';
 
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { makeStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
+//import { makeStyles } from "@mui/material/styles";
+import { green } from "@mui/material/colors";
 
 import { i18n } from "../../translate/i18n";
 
@@ -34,6 +34,7 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 import { Can } from "../Can";
 import useWhatsApps from "../../hooks/useWhatsApps";
 
+/*
 const useStyles = makeStyles(theme => ({
 	root: {
 		display: "flex",
@@ -63,6 +64,7 @@ const useStyles = makeStyles(theme => ({
 		minWidth: 120,
 	},
 }));
+*/
 
 const UserSchema = Yup.object().shape({
 	name: Yup.string()
@@ -74,7 +76,7 @@ const UserSchema = Yup.object().shape({
 });
 
 const UserModal = ({ open, onClose, userId }) => {
-	const classes = useStyles();
+	const classes = {};//useStyles();
 
 	const initialState = {
 		name: "",

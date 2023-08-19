@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
 import openSocket from "../../services/socket-io";
 
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import Paper from "@material-ui/core/Paper";
+//import { makeStyles } from "@mui/material/styles";
+import List from "@mui/material/List";
+import Paper from "@mui/material/Paper";
 
 import TicketListItem from "../TicketListItem";
 import TicketsListSkeleton from "../TicketsListSkeleton";
@@ -11,7 +11,9 @@ import TicketsListSkeleton from "../TicketsListSkeleton";
 import useTickets from "../../hooks/useTickets";
 import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
+import { Typography } from "@mui/material";
 
+/*
 const useStyles = makeStyles(theme => ({
 	ticketsListWrapper: {
 		position: "relative",
@@ -40,13 +42,6 @@ const useStyles = makeStyles(theme => ({
 		justifyContent: "space-between",
 	},
 
-	ticketsCount: {
-		fontWeight: "normal",
-		color: "rgb(104, 121, 146)",
-		marginLeft: "8px",
-		fontSize: "14px",
-	},
-
 	noTicketsText: {
 		textAlign: "center",
 		color: "rgb(104, 121, 146)",
@@ -70,6 +65,7 @@ const useStyles = makeStyles(theme => ({
 		justifyContent: "center",
 	},
 }));
+*/
 
 const reducer = (state, action) => {
 	if (action.type === "LOAD_TICKETS") {
@@ -152,13 +148,13 @@ const reducer = (state, action) => {
 	}
 };
 
-	const TicketsList = (props) => {
-		const { status, searchParam, showAll, selectedQueueIds, updateCount, style } =
-			props;
-	const classes = useStyles();
+const TicketsList = (props) => {
+	const { status, searchParam, showAll, selectedQueueIds, updateCount, sx } = props;
+	
+	const { user } = useContext(AuthContext);
+
 	const [pageNumber, setPageNumber] = useState(1);
 	const [ticketsList, dispatch] = useReducer(reducer, []);
-	const { user } = useContext(AuthContext);
 
 	useEffect(() => {
 		dispatch({ type: "RESET" });
@@ -175,10 +171,7 @@ const reducer = (state, action) => {
 
 	useEffect(() => {
 		if (!status && !searchParam) return;
-		dispatch({
-			type: "LOAD_TICKETS",
-			payload: tickets,
-		});
+		dispatch({ type: "LOAD_TICKETS", payload: tickets, });
 	}, [tickets]);
 
 	useEffect(() => {
@@ -247,15 +240,11 @@ const reducer = (state, action) => {
 	}, [status, searchParam, showAll, user, selectedQueueIds]);
 
 	useEffect(() => {
-    if (typeof updateCount === "function") {
-      updateCount(ticketsList.length);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ticketsList]);
+		if (typeof updateCount === "function") 
+			updateCount(ticketsList.length);
+ 	}, [ticketsList]);
 
-	const loadMore = () => {
-		setPageNumber(prevState => prevState + 1);
-	};
+	const loadMore = () => setPageNumber(prevState => prevState + 1);
 
 	const handleScroll = e => {
 		if (!hasMore || loading) return;
@@ -269,35 +258,23 @@ const reducer = (state, action) => {
 	};
 
 	return (
-    <Paper className={classes.ticketsListWrapper} style={style}>
-			<Paper
-				square
-				name="closed"
-				elevation={0}
-				className={classes.ticketsList}
-				onScroll={handleScroll}
-			>
-				<List style={{ paddingTop: 0 }}>
+    	<Paper sx={sx}>
+			<Paper square name="closed" elevation={0} onScroll={handleScroll}>
+				<List sx={{ p: 0 }}>
 					{ticketsList.length === 0 && !loading ? (
-						<div className={classes.noTicketsDiv}>
-							<span className={classes.noTicketsTitle}>
-								{i18n.t("ticketsList.noTicketsTitle")}
-							</span>
-							<p className={classes.noTicketsText}>
-								{i18n.t("ticketsList.noTicketsMessage")}
-							</p>
-						</div>
+						<Paper sx={{p: 4}} elevation={0}>
+							<Typography>{i18n.t("ticketsList.noTicketsTitle")}</Typography>
+							<Typography>{i18n.t("ticketsList.noTicketsMessage")}</Typography>
+						</Paper>
 					) : (
 						<>
-							{ticketsList.map(ticket => (
-								<TicketListItem ticket={ticket} key={ticket.id} />
-							))}
+							{ticketsList.map(ticket => <TicketListItem ticket={ticket} key={ticket.id} />)}
 						</>
 					)}
 					{loading && <TicketsListSkeleton />}
 				</List>
 			</Paper>
-    </Paper>
+    	</Paper>
 	);
 };
 

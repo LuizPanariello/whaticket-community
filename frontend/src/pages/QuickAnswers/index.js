@@ -4,7 +4,6 @@ import openSocket from "../../services/socket-io";
 import {
   Button,
   IconButton,
-  makeStyles,
   Paper,
   Table,
   TableBody,
@@ -13,11 +12,13 @@ import {
   TableRow,
   InputAdornment,
   TextField,
-} from "@material-ui/core";
-import { Edit, DeleteOutline } from "@material-ui/icons";
-import SearchIcon from "@material-ui/icons/Search";
+  Box
+} from "@mui/material";
+
+import { Edit, DeleteOutline, Search } from "@mui/icons-material";
 
 import MainContainer from "../../components/MainContainer";
+import MainContent from "../../components/MainContent";
 import MainHeader from "../../components/MainHeader";
 import MainHeaderButtonsWrapper from "../../components/MainHeaderButtonsWrapper";
 import Title from "../../components/Title";
@@ -74,17 +75,7 @@ const reducer = (state, action) => {
   }
 };
 
-const useStyles = makeStyles((theme) => ({
-  mainPaper: {
-    flex: 1,
-    padding: theme.spacing(1),
-    overflowY: "scroll",
-    ...theme.scrollbarStyles,
-  },
-}));
-
 const QuickAnswers = () => {
-  const classes = useStyles();
 
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
@@ -142,9 +133,7 @@ const QuickAnswers = () => {
     };
   }, []);
 
-  const handleSearch = (event) => {
-    setSearchParam(event.target.value.toLowerCase());
-  };
+  const handleSearch = (event) => setSearchParam(event.target.value.toLowerCase());
 
   const handleOpenQuickAnswersModal = () => {
     setSelectedQuickAnswers(null);
@@ -173,9 +162,7 @@ const QuickAnswers = () => {
     setPageNumber(1);
   };
 
-  const loadMore = () => {
-    setPageNumber((prevState) => prevState + 1);
-  };
+  const loadMore = () => setPageNumber((prevState) => prevState + 1);
 
   const handleScroll = (e) => {
     if (!hasMore || loading) return;
@@ -186,10 +173,93 @@ const QuickAnswers = () => {
   };
 
   return (
-    <MainContainer>
+    <>
+      <MainContainer>
+        
+        <MainHeader>
+          <Title>{i18n.t("quickAnswers.title")}</Title>
+          <MainHeaderButtonsWrapper>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <TextField
+                placeholder={i18n.t("quickAnswers.searchPlaceholder")}
+                type="search"
+                size="small"
+                value={searchParam}
+                onChange={handleSearch}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search style={{ color: "gray" }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenQuickAnswersModal}
+              >
+                {i18n.t("quickAnswers.buttons.add")}
+              </Button>
+            </Box>
+          </MainHeaderButtonsWrapper>
+        </MainHeader>
+
+        <MainContent>
+
+          <Paper variant="outlined" onScroll={handleScroll}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">
+                    {i18n.t("quickAnswers.table.shortcut")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {i18n.t("quickAnswers.table.message")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {i18n.t("quickAnswers.table.actions")}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                <>
+                  {quickAnswers.map((quickAnswer) => (
+                    <TableRow key={quickAnswer.id}>
+                      <TableCell align="center">{quickAnswer.shortcut}</TableCell>
+                      <TableCell align="center">{quickAnswer.message}</TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleEditQuickAnswers(quickAnswer)}
+                        >
+                          <Edit />
+                        </IconButton>
+
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            setConfirmModalOpen(true);
+                            setDeletingQuickAnswers(quickAnswer);
+                          }}
+                        >
+                          <DeleteOutline />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {loading && <TableRowSkeleton columns={3} />}
+                </>
+              </TableBody>
+            </Table>
+          </Paper>
+        </MainContent>
+
+      </MainContainer>
+
       <ConfirmationModal
-        title={
-          deletingQuickAnswers &&
+        title={deletingQuickAnswers &&
           `${i18n.t("quickAnswers.confirmationModal.deleteTitle")} ${
             deletingQuickAnswers.shortcut
           }?`
@@ -204,84 +274,9 @@ const QuickAnswers = () => {
         open={quickAnswersModalOpen}
         onClose={handleCloseQuickAnswersModal}
         aria-labelledby="form-dialog-title"
-        quickAnswerId={selectedQuickAnswers && selectedQuickAnswers.id}
-      ></QuickAnswersModal>
-      <MainHeader>
-        <Title>{i18n.t("quickAnswers.title")}</Title>
-        <MainHeaderButtonsWrapper>
-          <TextField
-            placeholder={i18n.t("quickAnswers.searchPlaceholder")}
-            type="search"
-            value={searchParam}
-            onChange={handleSearch}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon style={{ color: "gray" }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpenQuickAnswersModal}
-          >
-            {i18n.t("quickAnswers.buttons.add")}
-          </Button>
-        </MainHeaderButtonsWrapper>
-      </MainHeader>
-      <Paper
-        className={classes.mainPaper}
-        variant="outlined"
-        onScroll={handleScroll}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">
-                {i18n.t("quickAnswers.table.shortcut")}
-              </TableCell>
-              <TableCell align="center">
-                {i18n.t("quickAnswers.table.message")}
-              </TableCell>
-              <TableCell align="center">
-                {i18n.t("quickAnswers.table.actions")}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <>
-              {quickAnswers.map((quickAnswer) => (
-                <TableRow key={quickAnswer.id}>
-                  <TableCell align="center">{quickAnswer.shortcut}</TableCell>
-                  <TableCell align="center">{quickAnswer.message}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditQuickAnswers(quickAnswer)}
-                    >
-                      <Edit />
-                    </IconButton>
-
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        setConfirmModalOpen(true);
-                        setDeletingQuickAnswers(quickAnswer);
-                      }}
-                    >
-                      <DeleteOutline />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {loading && <TableRowSkeleton columns={3} />}
-            </>
-          </TableBody>
-        </Table>
-      </Paper>
-    </MainContainer>
+        quickAnswerId={selectedQuickAnswers && selectedQuickAnswers.id} 
+      />
+    </>
   );
 };
 
