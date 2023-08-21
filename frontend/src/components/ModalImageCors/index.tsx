@@ -9,7 +9,9 @@ const ModalImageCors: FC<{ imageUrl: string }> = ({ imageUrl }) => {
 	const [blobUrl, setBlobUrl] = useState("");
 
 	useEffect(() => {
-		if (!imageUrl) return;
+		if (!imageUrl) 
+			return;
+		
 		const fetchImage = async () => {
 			const { data, headers } = await api.get(imageUrl, {
 				responseType: "blob",
@@ -20,6 +22,7 @@ const ModalImageCors: FC<{ imageUrl: string }> = ({ imageUrl }) => {
 			setBlobUrl(url);
 			setFetching(false);
 		};
+
 		fetchImage();
 	}, [imageUrl]);
 

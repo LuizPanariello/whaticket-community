@@ -1,16 +1,17 @@
+import Box from "@mui/material/Box";
 import { FC } from "react";
 
 const TabPanel: FC<any> = ({ children, value, name, ...rest }) => {
 	if (value === name) {
 		return (
-			<div
+			<Box
 				role="tabpanel"
 				id={`simple-tabpanel-${name}`}
 				aria-labelledby={`simple-tab-${name}`}
 				{...rest}
 			>
 				<>{children}</>
-			</div>
+			</Box>
 		);
 	} else return null;
 };

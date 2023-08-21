@@ -20,6 +20,7 @@ const TicketsQueueSelect: FC<any> = ({
 				<Select
 					multiple
 					displayEmpty
+					size="small"
 					variant="outlined"
 					value={selectedQueueIds}
 					onChange={handleChange}

@@ -170,8 +170,13 @@ const TicketsList: FC<any> = (props) => {
 	});
 
 	useEffect(() => {
-		if (!status && !searchParam) return;
-		dispatch({ type: "LOAD_TICKETS", payload: tickets, });
+		if (!status && !searchParam) 
+			return;
+
+		dispatch({ 
+			type: "LOAD_TICKETS", 
+			payload: tickets 
+		});
 	}, [tickets]);
 
 	useEffect(() => {
@@ -258,8 +263,22 @@ const TicketsList: FC<any> = (props) => {
 	};
 
 	return (
-    	<Paper sx={sx}>
-			<Paper square elevation={0} onScroll={handleScroll}>
+    	<Paper 
+			sx={{
+				flexGrow: 1,
+				overflowY: "hidden",
+				...sx
+			}}
+		>
+			<Paper square elevation={0} onScroll={handleScroll} sx={{
+				position: "relative",
+				display: "flex",
+				height: "100%",
+				flexDirection: "column",
+				overflowY: "auto",
+				borderTopRightRadius: 0,
+				borderBottomRightRadius: 0,
+			}}>
 				<List sx={{ p: 0 }}>
 					{ticketsList?.length === 0 && !loading ? (
 						<Paper sx={{p: 4}} elevation={0}>

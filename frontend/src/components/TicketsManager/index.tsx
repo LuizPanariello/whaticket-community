@@ -68,10 +68,7 @@ const TicketsManager: FC = () => {
     }, 500);
   };
 
-  const handleChangeTab = (e: any, newValue: any) => {
-    setTab(newValue);
-  };
-
+  const handleChangeTab = (e: any, newValue: any) => setTab(newValue);
   const handleChangeTabOpen = (_: any, newValue: any) => setTabOpen(newValue);
 
   const applyPanelStyle = (status: any) => {
@@ -86,10 +83,13 @@ const TicketsManager: FC = () => {
       elevation={0} 
       variant="outlined"
       sx={{
-        maxHeight: "calc(100vh - 80px)"
+        marginTop: "-32px;",
+        height: "calc(100vh - 48px)",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column"
       }}
     >
-      
       <NewTicketModal modalOpen={newTicketModalOpen} onClose={() => setNewTicketModalOpen(false)} />
       
       <Paper elevation={0} square>
@@ -119,12 +119,13 @@ const TicketsManager: FC = () => {
         </Tabs>
       </Paper>
 
-      <Paper square elevation={0}>
+      <Paper square elevation={0} sx={{p: 2}}>
         {tab === "search" ? (
           <Box>
             <Search />
             
             <TextField
+              size="small"
               type="search"
               inputRef={searchInputRef}
               placeholder={i18n.t("tickets.search.placeholder")}
@@ -171,64 +172,71 @@ const TicketsManager: FC = () => {
         
       </Paper>
 
-      <TabPanel value={tab} name="open">
-        <Tabs
-          value={tabOpen}
-          onChange={handleChangeTabOpen}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="fullWidth"
-        >
-          <Tab label={
-              <Badge badgeContent={openCount} color="primary"> 
-                {i18n.t("ticketsList.assignedHeader")}
-              </Badge>
-            }
-            value={"open"}
-          />
-          <Tab label={
-              <Badge badgeContent={pendingCount} color="secondary" >
-                {i18n.t("ticketsList.pendingHeader")}
-              </Badge>
-            }
-            value={"pending"}
-          />
-        </Tabs>
+      <TabPanel 
+        value={tab} 
+        name="open" 
+        sx={{
+          display: "flex",
+          overflow: "hidden",
+          flexDirection: "column"
+        }}>
+          <Tabs
+            value={tabOpen}
+            onChange={handleChangeTabOpen}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab label={
+                <Badge badgeContent={openCount} color="primary"> 
+                  {i18n.t("ticketsList.assignedHeader")}
+                </Badge>
+              }
+              value={"open"}
+            />
+            <Tab label={
+                <Badge badgeContent={pendingCount} color="secondary" >
+                  {i18n.t("ticketsList.pendingHeader")}
+                </Badge>
+              }
+              value={"pending"}
+            />
+          </Tabs>
         
-        <TicketsList
-          status="open"
-          showAll={showAllTickets}
-          selectedQueueIds={selectedQueueIds}
-          updateCount={(val: any) => setOpenCount(val)}       
-          sx={{
-            ...applyPanelStyle("open")
-          }}   
-        />
+          <TicketsList
+            status="open"
+            showAll={showAllTickets}
+            selectedQueueIds={selectedQueueIds}
+            updateCount={(val: any) => setOpenCount(val)}       
+            sx={{
+              ...applyPanelStyle("open")
+            }}   
+          />
 
-        <TicketsList
-          status="pending"
-          selectedQueueIds={selectedQueueIds}
-          updateCount={(val: any) => setPendingCount(val)}
-          sx={{
-            ...applyPanelStyle("pending")
-          }} 
-        />
+          <TicketsList
+            status="pending"
+            selectedQueueIds={selectedQueueIds}
+            updateCount={(val: any) => setPendingCount(val)}
+            sx={{
+              ...applyPanelStyle("pending")
+            }} 
+          />
       </TabPanel>
       
       <TabPanel value={tab} name="closed">
-        <TicketsList
-          status="closed"
-          showAll={true}
-          selectedQueueIds={selectedQueueIds}
-        />
+          <TicketsList
+            status="closed"
+            showAll={true}
+            selectedQueueIds={selectedQueueIds}
+          />
       </TabPanel>
       
       <TabPanel value={tab} name="search">
-        <TicketsList
-          searchParam={searchParam}
-          showAll={true}
-          selectedQueueIds={selectedQueueIds}
-        />
+          <TicketsList
+            searchParam={searchParam}
+            showAll={true}
+            selectedQueueIds={selectedQueueIds}
+          />
       </TabPanel>
     </Paper>
   );

@@ -83,6 +83,7 @@ const Login = () => {
           {i18n.t("login.title")}
         </Typography>
         <form noValidate onSubmit={handlSubmit}>
+          {/* Aqui vai entrar o Alias da empresa para tenancy */}
           <TextField
             variant="outlined"
             margin="normal"
@@ -138,7 +139,6 @@ const Login = () => {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>{/* <Copyright /> */}</Box>
     </Container>
   );
 };

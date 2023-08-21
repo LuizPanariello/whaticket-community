@@ -5,6 +5,8 @@ import toastError from "../../errors/toastError";
 import api from "../../services/api";
 
 const reducer = (state: any, action: any) => {
+	console.log(state, action);
+	
 	if (action.type === "LOAD_WHATSAPPS") {
 		const whatsApps = action.payload;
 
@@ -48,9 +50,8 @@ const reducer = (state: any, action: any) => {
 		return [...state];
 	}
 
-	if (action.type === "RESET") {
+	if (action.type === "RESET")
 		return [];
-	}
 };
 
 const useWhatsApps = () => {
@@ -59,6 +60,7 @@ const useWhatsApps = () => {
 
 	useEffect(() => {
 		setLoading(true);
+		
 		const fetchSession = async () => {
 			try {
 				const { data } = await api.get("/whatsapp/");
@@ -69,6 +71,7 @@ const useWhatsApps = () => {
 				toastError(err);
 			}
 		};
+
 		fetchSession();
 	}, []);
 
@@ -76,6 +79,7 @@ const useWhatsApps = () => {
 		const socket = openSocket();
 
 		socket.on("whatsapp", (data: any) => {
+			console.log(data)
 			if (data.action === "update") {
 				dispatch({ type: "UPDATE_WHATSAPPS", payload: data.whatsapp });
 			}

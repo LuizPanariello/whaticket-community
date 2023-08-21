@@ -2,19 +2,17 @@ import { useState, useEffect, useReducer, useRef, FC, Fragment } from "react";
 import { isSameDay, parseISO, format } from "date-fns";
 import openSocket from "../../services/socket-io";
 
-import {
-  Button,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Typography,
-  Box
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
+import CircularProgress from "@mui/material/CircularProgress";
+import Button from "@mui/material/Button";
 
 import {
   AccessTime,
   Block,
-  Calculate,
   Done,
   DoneAll,
   ExpandMore,
@@ -31,24 +29,12 @@ import whatsBackground from "../../assets/wa-background.png";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import Audio from "../Audio";
+import green from "@mui/material/colors/green";
+
+let delayDebounceFn: number;
 
 /*
 const useStyles = makeStyles((theme) => ({
-
-
-  messagesList: {
-    backgroundImage: `url(${whatsBackground})`,
-    display: "flex",
-    flexDirection: "column",
-    flexGrow: 1,
-    padding: "20px 20px 20px 20px",
-    overflowY: "scroll",
-    [theme.breakpoints.down("sm")]: {
-      paddingBottom: "90px",
-    },
-    ...theme.scrollbarStyles,
-  },
-
   messageLeft: {
     marginRight: 20,
     marginTop: 2,
@@ -95,13 +81,11 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "pre-wrap",
     overflow: "hidden",
   },
-
   quotedSideColorLeft: {
     flex: "none",
     width: "4px",
     backgroundColor: "#6bcbef",
   },
-
   messageRight: {
     marginLeft: 20,
     marginTop: 2,
@@ -130,7 +114,6 @@ const useStyles = makeStyles((theme) => ({
       right: 0,
     },
   },
-
   quotedContainerRight: {
     margin: "-3px -80px 6px -6px",
     overflowY: "hidden",
@@ -139,20 +122,17 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     position: "relative",
   },
-
   quotedMsgRight: {
     padding: 10,
     maxWidth: 300,
     height: "auto",
     whiteSpace: "pre-wrap",
   },
-
   quotedSideColorRight: {
     flex: "none",
     width: "4px",
     backgroundColor: "#35cd96",
   },
-
   messageActionsButton: {
     display: "none",
     position: "relative",
@@ -161,12 +141,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "inherit",
     opacity: "90%",
     "&:hover, &.Mui-focusVisible": { backgroundColor: "inherit" },
-  },
-
-  messageContactName: {
-    display: "flex",
-    color: "#6bcbef",
-    fontWeight: 500,
   },
 
   textContentItem: {
@@ -181,16 +155,6 @@ const useStyles = makeStyles((theme) => ({
     padding: "3px 80px 6px 6px",
   },
 
-  messageMedia: {
-    objectFit: "cover",
-    width: 250,
-    height: 200,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-  },
-
   timestamp: {
     fontSize: 11,
     position: "absolute",
@@ -198,7 +162,6 @@ const useStyles = makeStyles((theme) => ({
     right: 5,
     color: "#999",
   },
-
   dailyTimestamp: {
     alignItems: "center",
     textAlign: "center",
@@ -209,33 +172,17 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     boxShadow: "0 1px 1px #b3b3b3",
   },
-
   dailyTimestampText: {
     color: "#808888",
     padding: 8,
     alignSelf: "center",
     marginLeft: "0px",
   },
-
-  ackIcons: {
-    fontSize: 18,
-    verticalAlign: "middle",
-    marginLeft: 4,
-  },
-
   deletedIcon: {
     fontSize: 18,
     verticalAlign: "middle",
     marginRight: 4,
   },
-
-  ackDoneAllIcon: {
-    color: green[500],
-    fontSize: 18,
-    verticalAlign: "middle",
-    marginLeft: 4,
-  },
-
   downloadMedia: {
     display: "flex",
     alignItems: "center",
@@ -292,8 +239,7 @@ const reducer = (state: any, action: any) => {
   }
 };
 
-const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
-  const classes = {};
+const MessagesList: FC<{ticketId: string, isGroup: boolean}> = ({ ticketId, isGroup }) => {
 
   const [messagesList, dispatch] = useReducer(reducer, []);
   const [pageNumber, setPageNumber] = useState(1);
@@ -316,7 +262,8 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
 
   useEffect(() => {
     setLoading(true);
-    const delayDebounceFn = setTimeout(() => {
+
+    delayDebounceFn = setTimeout(() => {
       const fetchMessages = async () => {
         try {
           const { data } = await api.get("/messages/" + ticketId, {
@@ -330,48 +277,66 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
           }
 
           if (pageNumber === 1 && data.messages.length > 1) {
-            scrollToBottom();
+            setTimeout(() => {
+              scrollToBottom();
+            }, 10)
           }
         } catch (err: any) {
           setLoading(false);
           toastError(err);
         }
       };
+      
       fetchMessages();
     }, 500);
+
     return () => {
       clearTimeout(delayDebounceFn);
     };
   }, [pageNumber, ticketId]);
 
   useEffect(() => {
+    if(!ticketId)
+      return;
+
     const socket = openSocket();
 
-    socket.on("connect", () => socket.emit("joinChatBox", ticketId));
+    socket.on("connect", () => { socket.emit("joinChatBox", ticketId) });
+
+    socket.on("connect_error", (err: any) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
 
     socket.on("appMessage", (data: any) => {
+      console.log(data)
       if (data.action === "create") {
         dispatch({ type: "ADD_MESSAGE", payload: data.message });
-        scrollToBottom();
+
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100)
       }
 
       if (data.action === "update") {
+        console.log("UPDATE")
         dispatch({ type: "UPDATE_MESSAGE", payload: data.message });
       }
     });
 
     return () => {
+      console.log("DISCONNECT");
       socket.disconnect();
     };
   }, [ticketId]);
 
-  const loadMore = () => {
-    setPageNumber((prevPageNumber) => prevPageNumber + 1);
-  };
+  const loadMore = () => setPageNumber((prevPageNumber) => prevPageNumber + 1);
 
   const scrollToBottom = () => {
-    if (lastMessageRef.current) {
-      lastMessageRef.current.scrollIntoView({});
+    if (lastMessageRef.current)
+    {
+      lastMessageRef.current.scrollIntoView({
+        behavior: "smooth"
+      });
     }
   };
 
@@ -389,7 +354,10 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
       return;
 
     if (scrollTop < 50)
+    {
+      console.log("LOAD MORE")
       loadMore();
+    }
   };
 
   const handleOpenMessageOptionsMenu = (e: any, message: any) => {
@@ -397,7 +365,7 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
     setSelectedMessage(message);
   };
 
-  const handleCloseMessageOptionsMenu = (e: any) => setAnchorEl(null);
+  const handleCloseMessageOptionsMenu = () => setAnchorEl(null);
 
   const checkMessageMedia = (message: any) => {
     if (message.mediaType === "location" && message.body.split('|').length >= 2) {
@@ -432,13 +400,22 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
       return <VcardPreview contact={contact} numbers={obj[0]?.number} />
     }
     else if ( /^.*\.(jpe?g|png|gif)?$/i.exec(message.mediaUrl) && message.mediaType === "image") {
+      console.log("AAAAA", message.mediaUrl)
       return <ModalImageCors imageUrl={message.mediaUrl} />;
     } else if (message.mediaType === "audio") {
       return <Audio url={message.mediaUrl} />
     } else if (message.mediaType === "video") {
       return (
         <video
-          //className={classes.messageMedia}
+          style={{
+            objectFit: "cover",
+            width: 250,
+            height: 200,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            borderBottomLeftRadius: 8,
+            borderBottomRightRadius: 8,
+          }}
           src={message.mediaUrl}
           controls
         />
@@ -452,7 +429,7 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "inherit",
-              padding: 1
+              padding: 2
             }}
           >
             <Button
@@ -471,31 +448,52 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
     }
   };
 
+  // TODO tirar daqui
   const renderMessageAck = (message: any) => {
     if (message.ack === 0) {
       return <AccessTime 
         fontSize="small" 
-          //className={classes.ackIcons} 
-        />;
+        sx={{
+          fontSize: 18,
+          verticalAlign: "middle",
+          marginLeft: 1,
+        }}
+      />;
     }
     if (message.ack === 1) {
-      return <Done fontSize="small" 
-      //className={classes.ackIcons} 
+      return <Done 
+        fontSize="small" 
+        sx={{
+          fontSize: 18,
+          verticalAlign: "middle",
+          marginLeft: 1,
+        }}
       />;
     }
     if (message.ack === 2) {
-      return <DoneAll fontSize="small" 
-        //className={classes.ackIcons} 
+      return <DoneAll 
+        fontSize="small" 
+        sx={{
+          fontSize: 18,
+          verticalAlign: "middle",
+          marginLeft: 1,
+        }}
       />;
     }
     if (message.ack === 3 || message.ack === 4) {
       return <DoneAll 
         fontSize="small" 
-        //className={classes.ackDoneAllIcon} 
+        sx={{
+          fontSize: 18,
+          verticalAlign: "middle",
+          marginLeft: 1,
+          color: green[500]
+        }}
       />;
     }
   };
-
+  
+  // TODO tirar daqui
   const renderDailyTimestamps = (message: any, index: number) => {
     if (!messagesList) 
       return <></>;
@@ -505,27 +503,22 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
         <Box 
           key={`timestamp-${message.id}`}
           sx={{
+            p:1,
+            borderRadius: 1,
             alignItems: "center",
             textAlign: "center",
             alignSelf: "center",
-            width: "110px",
             backgroundColor: "#e1f3fb",
-            margin: "10px",
-            borderRadius: "10px",
             boxShadow: "0 1px 1px #b3b3b3",
           }}
         >
-          <Typography sx={{
-            color: "#808888",
-            padding: 8,
-            alignSelf: "center",
-            marginLeft: "0px"
-          }}>
+          <Typography fontSize={12} sx={{ color: "#808888", alignSelf: "center" }}>
             {format(parseISO(messagesList[index].createdAt), "dd/MM/yyyy")}
           </Typography>
         </Box>
       );
     }
+
     if (index < messagesList.length - 1) {
       let messageDay = parseISO(messagesList[index].createdAt);
       let previousMessageDay = parseISO(messagesList[index - 1].createdAt);
@@ -534,10 +527,23 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
         return (
           <span 
             key={`timestamp-${message.id}`}
-            //className={classes.dailyTimestamp} 
+            style={{
+              alignItems: "center",
+              textAlign: "center",
+              alignSelf: "center",
+              width: "110px",
+              backgroundColor: "#e1f3fb",
+              margin: "10px",
+              borderRadius: "10px",
+              boxShadow: "0 1px 1px #b3b3b3",
+            }}
             >
             <Box 
-              //className={classes.dailyTimestampText}
+              sx={{
+                color: "#808888",
+                alignSelf: "center",
+                marginLeft: "0px",
+              }}
             >
             {format(parseISO(messagesList[index].createdAt), "dd/MM/yyyy")}
             </Box>
@@ -545,6 +551,7 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
         );
       }
     }
+
     if (index === messagesList.length - 1) {
       return (
         <Box
@@ -555,7 +562,8 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
       );
     }
   };
-
+  
+  // TODO tirar daqui
   const renderMessageDivider = (message: any, index: any) => {
     if(!messagesList)
       return <></>
@@ -572,19 +580,19 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
     }
   };
 
-  //message.fromMe
+  // TODO tirar daqui
   const renderQuotedMessage = (message: any) => {
     return (
       <Box 
         sx={{
           maxHeight: "calc(100% - 10px)",
-          marginLeft: 20,
-          marginTop: 2,
+          marginLeft: 2,
+          marginTop: 1,
           minWidth: 100,
           maxWidth: 600,
           pl: 1,
           pr: 1,
-          pt: 5,
+          pt: 1,
           pb: 0,
           height: "auto",
           display: "block",
@@ -593,19 +601,29 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
           backgroundColor: "#dcf8c6",
           color: "#303030",
           alignSelf: "flex-end",
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
-          borderBottomLeftRadius: 8,
-          borderBottomRightRadius: 0,
-          boxShadow: "0 1px 1px #b3b3b3",
+          borderLeft: 3,
+          boxShadow: "0 1px 1px #b3b3b3"
         }}
       >
         <Box
-          //</Box>className={clsx(classes.quotedSideColorLeft, {
-          //  [classes.quotedSideColorRight]: message.quotedMsg?.fromMe,
-          //})}
-        ></Box>
+          sx={{
+            padding: 1,
+            maxWidth: 300,
+            height: "auto",
+            display: "block",
+            whiteSpace: "pre-wrap",
+            overflow: "hidden",
+          }} 
+        />
         <Box 
+          sx={{
+            padding: 1,
+            maxWidth: 300,
+            height: "auto",
+            display: "block",
+            whiteSpace: "pre-wrap",
+            overflow: "hidden",
+          }}
           //className={classes.quotedMsg}
         >
           {!message.quotedMsg?.fromMe && (
@@ -660,6 +678,15 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
                   size="small"
                   id="messageActionsButton"
                   disabled={message.isDeleted}
+                  style={{
+                    display: "none",
+                    position: "relative",
+                    color: "#999",
+                    zIndex: 1,
+                    backgroundColor: "inherit",
+                    opacity: "90%",
+                    //"&:hover, &.Mui-focusVisible": { backgroundColor: "inherit" },
+                  }}
                   //className={classes.messageActionsButton}
                   onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
                 >
@@ -667,22 +694,36 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
                 </IconButton>
 
                 {isGroup && (
-                  <span 
-                    //className={classes.messageContactName}
+                  <Typography
+                    component={"span"}
+                    sx={{
+                      display: "flex",
+                      color: "#6bcbef",
+                      fontWeight: 500
+                    }}
                   >
                     {message.contact?.name}
-                  </span>
+                  </Typography>
                 )}
 
                 {(message.mediaUrl || message.mediaType === "location" || message.mediaType === "vcard") && checkMessageMedia(message)}
 
                 <Box 
-                  //className={classes.textContentItem}
+                  sx={{
+                    overflowWrap: "break-word",
+                    padding: "3px 80px 6px 6px",
+                  }}
                 >
                   {message.quotedMsg && renderQuotedMessage(message)}
                   <MarkdownWrapper>{message.body}</MarkdownWrapper>
                   <span 
-                  //className={classes.timestamp}
+                    style={{
+                      fontSize: 11,
+                      position: "absolute",
+                      bottom: 0,
+                      right: 5,
+                      color: "#999",
+                    }}
                   >
                     {format(parseISO(message.createdAt), "HH:mm")}
                   </span>
@@ -696,13 +737,41 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
               {renderDailyTimestamps(message, index)}
               {renderMessageDivider(message, index)}
               <div 
-                //className={classes.messageRight}
+                style={{
+                  marginLeft: 20,
+                  marginTop: 2,
+                  minWidth: 100,
+                  maxWidth: 600,
+                  height: "auto",
+                  display: "block",
+                  position: "relative",
+                  whiteSpace: "pre-wrap",
+                  backgroundColor: "#dcf8c6",
+                  color: "#303030",
+                  alignSelf: "flex-end",
+                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 8,
+                  borderBottomLeftRadius: 8,
+                  borderBottomRightRadius: 0,
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  paddingTop: 5,
+                  paddingBottom: 0,
+                  boxShadow: "0 1px 1px #b3b3b3"
+                }}
               >
                 <IconButton
                   size="small"
                   id="messageActionsButton"
                   disabled={message.isDeleted}
-                  //className={classes.messageActionsButton}
+                  style={{
+                    display: "none",
+                    position: "relative",
+                    color: "#999",
+                    zIndex: 1,
+                    backgroundColor: "inherit",
+                    opacity: "90%",
+                  }}
                   onClick={(e) => handleOpenMessageOptionsMenu(e, message)}
                 >
                   <ExpandMore />
@@ -719,13 +788,23 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
                     <Block
                       color="disabled"
                       fontSize="small"
-                      //className={classes.deletedIcon}
+                      style={{
+                        fontSize: 18,
+                        verticalAlign: "middle",
+                        marginRight: 4,
+                      }}
                     />
                   )}
                   {message.quotedMsg && renderQuotedMessage(message)}
                   <MarkdownWrapper>{message.body}</MarkdownWrapper>
                   <span 
-                    //className={classes.timestamp}
+                    style={{
+                      fontSize: 11,
+                      position: "absolute",
+                      bottom: 0,
+                      right: 5,
+                      color: "#999"
+                    }}
                   >
                     {format(parseISO(message.createdAt), "HH:mm")}
                     {renderMessageAck(message)}
@@ -736,8 +815,10 @@ const MessagesList: FC<any> = ({ ticketId, isGroup }) => {
           );
         }
       });
+
       return viewMessagesList;
     } else {
+      //TODO change
       return <div>Say hello to your new contact!</div>;
     }
   };

@@ -18,6 +18,7 @@ import api from "../../services/api";
 import toastError from "../../errors/toastError";
 import { ReplyMessageProvider } from "../../context/ReplyingMessage/ReplyingMessageContext";
 
+let delayDebounceFn: number;
 
 const Ticket: FC = () => {
   const { ticketId } = useParams();
@@ -29,9 +30,10 @@ const Ticket: FC = () => {
   const [ticket, setTicket] = useState<any>({});
 
   useEffect(() => {
+    console.log("AQUIIIIIIIIIIIIIIIII")
     setLoading(true);
 
-    const delayDebounceFn = setTimeout(() => {
+    delayDebounceFn = setTimeout(() => {
       const fetchTicket = async () => {
         try {
           const { data } = await api.get("/tickets/" + ticketId);
@@ -46,7 +48,9 @@ const Ticket: FC = () => {
       fetchTicket();
     }, 500);
 
-    return () => clearTimeout(delayDebounceFn);
+    return () => {
+      clearTimeout(delayDebounceFn)
+    };
   }, [ticketId, history]);
 
   useEffect(() => {
@@ -55,6 +59,8 @@ const Ticket: FC = () => {
     socket.on("connect", () => socket.emit("joinChatBox", ticketId));
 
     socket.on("ticket", (data: any) => {
+      console.log(data);
+
       if (data.action === "update") {
         setTicket(data.ticket);
       }
@@ -89,7 +95,8 @@ const Ticket: FC = () => {
         display: "flex",
         position: "relative",
         overflow: "hidden",
-        height: "calc(100vh - 80px)"
+        height: "calc(100vh - 48px)",
+        marginTop: "-32px;",
       }}
     >
       <Paper
@@ -116,7 +123,7 @@ const Ticket: FC = () => {
         </TicketHeader>
 
         <ReplyMessageProvider>
-          <MessagesList ticketId={ticketId} isGroup={ticket.isGroup} />
+          {ticketId && <MessagesList ticketId={ticketId} isGroup={ticket.isGroup} /> }
           <MessageInput ticketStatus={ticket.status} />
         </ReplyMessageProvider>
       </Paper>

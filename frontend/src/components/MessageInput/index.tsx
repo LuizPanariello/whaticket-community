@@ -38,7 +38,9 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import toastError from "../../errors/toastError";
 
-//const Mp3Recorder = new MicRecorder({ bitRate: 128 });
+import MicRecorder from 'mic-recorder'
+
+const recorder = new MicRecorder({ bitRate: 128, encoder: 'mp3' });
 
 const useStyles = {
   sendMessageIcons: {
@@ -251,7 +253,9 @@ const MessageInput = ({ ticketStatus }: any) => {
     setLoading(true);
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-     // await Mp3Recorder.start();
+
+      await recorder.start();
+
       setRecording(true);
       setLoading(false);
     } catch (err: any) {
@@ -266,6 +270,7 @@ const MessageInput = ({ ticketStatus }: any) => {
         const { data } = await api.get("/quickAnswers/", {
           params: { searchParam: inputMessage.substring(1) },
         });
+
         setQuickAnswer(data.quickAnswers);
         if (data.quickAnswers.length > 0) {
           setTypeBar(true);
@@ -283,7 +288,8 @@ const MessageInput = ({ ticketStatus }: any) => {
   const handleUploadAudio = async () => {
     setLoading(true);
     try {
-      const [, blob]: any = null;//await Mp3Recorder.stop().getMp3();
+      const [, blob] =  await recorder.stop().getAudio();
+      
       if (blob.size < 10000) {
         setLoading(false);
         setRecording(false);
