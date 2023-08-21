@@ -39,7 +39,7 @@ const SendWhatsAppMessage = async ({
 
     await ticket.update({ lastMessage: body });
     return sentMessage;
-  } catch (err) {
+  } catch (err: any) {
     throw new AppError("ERR_SENDING_WAPP_MSG");
   }
 };

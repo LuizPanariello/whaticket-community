@@ -22,7 +22,7 @@ const SetTicketMessagesAsRead = async (ticket: Ticket): Promise<void> => {
     await wbot.sendSeen(
       `${ticket.contact.number}@${ticket.isGroup ? "g" : "c"}.us`
     );
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       `Could not mark messages as read. Maybe whatsapp session disconnected? Err: ${err}`
     );

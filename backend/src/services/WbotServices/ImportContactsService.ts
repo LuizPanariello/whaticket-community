@@ -12,7 +12,7 @@ const ImportContactsService = async (userId:number): Promise<void> => {
 
   try {
     phoneContacts = await wbot.getContacts();
-  } catch (err) {
+  } catch (err: any) {
     logger.error(`Could not get whatsapp contacts from phone. Err: ${err}`);
   }
 

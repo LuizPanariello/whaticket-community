@@ -45,7 +45,7 @@ const SendWhatsAppMedia = async ({
     fs.unlinkSync(media.path);
 
     return sentMessage;
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     throw new AppError("ERR_SENDING_WAPP_MSG");
   }

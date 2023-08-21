@@ -36,7 +36,7 @@ export const GetWbotMessage = async (
     }
 
     return msgFound;
-  } catch (err) {
+  } catch (err: any) {
     throw new AppError("ERR_FETCH_WAPP_MSG");
   }
 };

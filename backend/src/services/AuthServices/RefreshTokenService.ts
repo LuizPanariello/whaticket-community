@@ -40,7 +40,7 @@ export const RefreshTokenService = async (
     const refreshToken = createRefreshToken(user);
 
     return { user, newToken, refreshToken };
-  } catch (err) {
+  } catch (err: any) {
     res.clearCookie("jrt");
     throw new AppError("ERR_SESSION_EXPIRED", 401);
   }
