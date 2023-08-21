@@ -143,13 +143,13 @@ const elements = [
 
 const allowedElements = [ "a", "b", "strong", "em", "u", "code", "del" ];
 
-const CustomLink: FC = ({ children, ...props }) => (
+const CustomLink: FC<any> = ({ children, ...props }) => (
 	<a {...props} target="_blank" rel="noopener noreferrer">
 		{children}
 	</a>
 );
 
-const MarkdownWrapper: FC = ({ children }: any) => {
+const MarkdownWrapper: FC<any> = ({ children }: any) => {
 	const boldRegex = /\*(.*?)\*/g;
 	const tildaRegex = /~(.*?)~/g;
 	

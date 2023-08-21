@@ -10,7 +10,7 @@ interface IWhatsAppsContext
 
 const WhatsAppsContext = createContext<IWhatsAppsContext>({} as any);
 
-const WhatsAppsProvider: FC = ({ children }) => {
+const WhatsAppsProvider: FC<{children?: React.ReactNode}> = ({ children }) => {
 	const { loading, whatsApps } = useWhatsApps();
 
 	return (

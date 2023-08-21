@@ -8,7 +8,7 @@ interface IReplyMessageContext
 
 const ReplyMessageContext = createContext<IReplyMessageContext>({} as any);
 
-const ReplyMessageProvider: FC = ({ children }) => {
+const ReplyMessageProvider: FC<{children?: React.ReactNode }> = ({ children }) => {
 	const [replyingMessage, setReplyingMessage] = useState<any>();
 
 	return (

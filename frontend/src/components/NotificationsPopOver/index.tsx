@@ -182,7 +182,7 @@ const NotificationsPopOver: FC = () => {
 		setIsOpen(false);
 	};
 
-	const NotificationTicket : FC = ({ children }) => <div onClick={handleClickAway}>{children}</div>;
+	const NotificationTicket : FC<{children: React.ReactNode}> = ({ children }) => <div onClick={handleClickAway}>{children}</div>;
 
 	return (
 		<>

@@ -9,7 +9,7 @@ const AuthContext = createContext<{
 	handleLogin: (userData: any) => void,
 	handleLogout: () => void }>({} as any);
 
-const AuthProvider: FC = ({children}) => {
+const AuthProvider: FC<{children?: React.ReactNode}> = ({children}) => {
 	const { loading, user, isAuth, handleLogin, handleLogout } = useAuth();
 
 	return (

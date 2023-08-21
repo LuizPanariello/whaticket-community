@@ -396,7 +396,7 @@ const MessagesList: FC<{ticketId: string, isGroup: boolean}> = ({ ticketId, isGr
     }
     else if ( /^.*\.(jpe?g|png|gif)?$/i.exec(message.mediaUrl) && message.mediaType === "image") {
       return <ModalImageCors imageUrl={message.mediaUrl} />;
-    } else if (message.mediaType === "audio") {
+    } else if (message.mediaType === "audio") { 
       return <Audio url={message.mediaUrl} />
     } else if (message.mediaType === "video") {
       return (

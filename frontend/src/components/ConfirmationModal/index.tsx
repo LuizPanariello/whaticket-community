@@ -13,6 +13,7 @@ interface IConfirmationModal {
 	open: boolean 
 	onClose: (v: boolean) => void 
 	onConfirm: () => void
+	children?: React.ReactNode
 }
 
 const ConfirmationModal: FC<IConfirmationModal> = ({ title, children, open, onClose, onConfirm }) => {
