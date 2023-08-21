@@ -11,8 +11,15 @@ export default defineConfig({
     svgrPlugin()
   ],
   build: {
-    sourcemap: true,
+    sourcemap: false,
     outDir: 'build',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-router-dom', 'react-dom', 'react-color']
+        },
+      },
+    },
   },
   optimizeDeps: {
     include: ['@mui/icons-material'],

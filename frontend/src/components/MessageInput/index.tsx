@@ -4,8 +4,6 @@ import { useParams } from "react-router-dom";
 import * as emojiData from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 
-//import MicRecorder from "mic-recorder-to-mp3";
-
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import CircularProgress from "@mui/material/CircularProgress";

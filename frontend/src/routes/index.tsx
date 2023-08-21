@@ -1,5 +1,3 @@
-import React from "react";
-
 import LoggedInLayout from "../layout";
 import Dashboard from "../pages/Dashboard";
 import Tickets from "../pages/Tickets";
