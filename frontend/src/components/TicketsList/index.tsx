@@ -1,9 +1,9 @@
 import { useState, useEffect, useReducer, useContext, FC } from "react";
 import openSocket from "../../services/socket-io";
 
-//import { makeStyles } from "@mui/material/styles";
 import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import TicketListItem from "../TicketListItem";
 import TicketsListSkeleton from "../TicketsListSkeleton";
@@ -11,61 +11,6 @@ import TicketsListSkeleton from "../TicketsListSkeleton";
 import useTickets from "../../hooks/useTickets";
 import { i18n } from "../../translate/i18n";
 import { AuthContext } from "../../context/Auth/AuthContext";
-import { Typography } from "@mui/material";
-
-/*
-const useStyles = makeStyles(theme => ({
-	ticketsListWrapper: {
-		position: "relative",
-		display: "flex",
-		height: "100%",
-		flexDirection: "column",
-		overflow: "hidden",
-		borderTopRightRadius: 0,
-		borderBottomRightRadius: 0,
-	},
-
-	ticketsList: {
-		flex: 1,
-		overflowY: "scroll",
-		...theme.scrollbarStyles,
-		borderTop: "2px solid rgba(0, 0, 0, 0.12)",
-	},
-
-	ticketsListHeader: {
-		color: "rgb(67, 83, 105)",
-		zIndex: 2,
-		backgroundColor: "white",
-		borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-	},
-
-	noTicketsText: {
-		textAlign: "center",
-		color: "rgb(104, 121, 146)",
-		fontSize: "14px",
-		lineHeight: "1.4",
-	},
-
-	noTicketsTitle: {
-		textAlign: "center",
-		fontSize: "16px",
-		fontWeight: "600",
-		margin: "0px",
-	},
-
-	noTicketsDiv: {
-		display: "flex",
-		height: "100px",
-		margin: 40,
-		flexDirection: "column",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-}));
-*/
 
 const reducer = (state: any, action: any) => {
 	if (action.type === "LOAD_TICKETS") {
@@ -277,7 +222,7 @@ const TicketsList: FC<any> = (props) => {
 				flexDirection: "column",
 				overflowY: "auto",
 				borderTopRightRadius: 0,
-				borderBottomRightRadius: 0,
+				borderBottomRightRadius: 0
 			}}>
 				<List sx={{ p: 0 }}>
 					{ticketsList?.length === 0 && !loading ? (

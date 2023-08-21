@@ -30,7 +30,6 @@ const Ticket: FC = () => {
   const [ticket, setTicket] = useState<any>({});
 
   useEffect(() => {
-    console.log("AQUIIIIIIIIIIIIIIIII")
     setLoading(true);
 
     delayDebounceFn = setTimeout(() => {

@@ -308,7 +308,6 @@ const MessagesList: FC<{ticketId: string, isGroup: boolean}> = ({ ticketId, isGr
     });
 
     socket.on("appMessage", (data: any) => {
-      console.log(data)
       if (data.action === "create") {
         dispatch({ type: "ADD_MESSAGE", payload: data.message });
 
@@ -318,13 +317,11 @@ const MessagesList: FC<{ticketId: string, isGroup: boolean}> = ({ ticketId, isGr
       }
 
       if (data.action === "update") {
-        console.log("UPDATE")
         dispatch({ type: "UPDATE_MESSAGE", payload: data.message });
       }
     });
 
     return () => {
-      console.log("DISCONNECT");
       socket.disconnect();
     };
   }, [ticketId]);
@@ -353,9 +350,7 @@ const MessagesList: FC<{ticketId: string, isGroup: boolean}> = ({ ticketId, isGr
     if (loading)
       return;
 
-    if (scrollTop < 50)
-    {
-      console.log("LOAD MORE")
+    if (scrollTop < 50) {
       loadMore();
     }
   };
@@ -400,7 +395,6 @@ const MessagesList: FC<{ticketId: string, isGroup: boolean}> = ({ ticketId, isGr
       return <VcardPreview contact={contact} numbers={obj[0]?.number} />
     }
     else if ( /^.*\.(jpe?g|png|gif)?$/i.exec(message.mediaUrl) && message.mediaType === "image") {
-      console.log("AAAAA", message.mediaUrl)
       return <ModalImageCors imageUrl={message.mediaUrl} />;
     } else if (message.mediaType === "audio") {
       return <Audio url={message.mediaUrl} />
